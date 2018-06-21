@@ -1,0 +1,328 @@
+1.react+redux,react 实现的原理和细节
+2.浏览器对layout 和 render 方面
+3.es5 es6
+4.throttle debounce
+  
+1.垂直水平垂直
+2.arguments 是不是数据，不是数组的话，怎么转为数组
+3.?[] == false {}== false? [1]==[1]?? [] == false 分别不成立？
+4.async settimeout 相关的？？？
+5.实现bind
+6.实现一个Throttle
+
+隐式转换的细节
+思考：
+[] == [] ? => false
+[] != [] ? => true
+因为[] 和 {} 是引用类型
+简单类型都是放在栈（stack）里
+对象类型都是放在堆（heap）里
+var d = { m: 20 }//地址假设为0x0012ff7c
+var e = { m: 20 }//重新开辟一段内存空间假设为0x0012ff8f
+console.log(e==d);//false
+
+[] ==![] 为什么是true
+1.== 的含义
+重点：执行相等比较运算符的结果总是boolean类型，
+表示是否由运算符指定的关系对二操作数成立。
+EqualityExpression :EqualityExpression == RelationExpression按照下面的执行过程：
+1.令lref 为解释执行 EqualityExpression
+2.令lval 为GetValue(lref)
+3.令rref为解释执行RelationExpression的结果
+4.令rval为GetValue(rref)
+5.返回做用相比较算法等于rval == lval 的 结果
+getValue 会获取一个子表达式的值(消除掉左值引用)，
+在表达式[] ==![] 中，[] 是一个空数组的引用,
+而 ![] 就有意思？？？？
+重点：! 取反运算符的优先级会高于 == 
+逻辑非的计算规则：
+产生UnaryExpression: !UnaryExpression按照下面执行过程：
+1.令expr为解释执行UnaryExpression的结果
+2.令oldValue 为ToBoolean(getValue(expr))
+3.如果oldValue为true，返回 false
+4.返回true
+重点：![] 返回是一个boolean
+抽象相等比较算法：
+比较运算 x==y,其中x和y是值，产生true或者false
+1.若Type(x) 与 Type(y)相同，则
+  a.若Type(x)为undefined，返回true
+  b.若Type(x)为Null，返回true
+  c.若Type(x)为number，则
+    1.若x为NaN，返回false
+    2.若y为NaN，返回false
+    3.若x与y相等数值，返回true
+    4.若x为+0 且y为 -0，返回true
+    5.若x为-0 且y为 +0，返回true
+  d.若Type(x)为String，则当x和y为完全相同的字符序列（长度相等且字符在相同位置）
+    返回true
+  e.若Type(x)为Boolean,当x和y为同为true或者同为false时，返回true，否则返回false
+ 2.若x为null且y为undefined，返回true
+ 3.若y为undefined且x为null,返回true
+ 4.若Type(x)为Number且Type(y)为string,返回  x == Tonumber(y) 的结果
+ 5.若Type(x)为String且Type(y)为 number,返回 Tonumber(x) == y 的结果
+ 6.若Type(x)为Boolean且Type(y)为number,返回 Tonumber(x) ==y 的结果
+ 7.若Type(y)为boolean且Type(x) 为number,返回 Tonumber(y)==x 的结果
+ 8.若Type(x)为String或者Number，且Type(y)为object,返回比较 x == ToPrimitive(y)的结果
+ 9.若Type(x)为Object,且Type(y)为String或Number，返回比较ToPrimitive(x) ==y的结果  
+
+ [] 是object， ![] 是boolean, 二者是不同类型
+ 所以会递归的调用 [] == ToNumber(Boolean)进行比较
+
+ ToBoolean 运算规则
+ undefined => false
+ Null => false
+ Number => +0,-0,NaN => false,其他是true
+ String => 空字符串 => false ,其他的是true
+ Object => true
+    
+ToNumber 运算规则：
+undefined => NaN
+Null => +0
+Boolean => true 为1 ，false=> 0
+Number 不转换
+String 变成Number 有规则
+
+ToPrimitive 默认是调用toString方法，于是 ToPrimitice([]) 等于空字符串。
+ToPrimitive 运算规则：
+undefined =>不转换
+null =>不转换
+boolean => 不转换
+Number => 不转换
+String => 不转换
+Object 返回对象的默认值 [[DefaultValue]] 这个方法
+
+toPrimitive(obj,preferredType) obj => 被转换的对象 preferredType => 希望转换的类型
+toPrimitive 
+1.如果obj为原始值的时候，直接返回
+2.否则调用 obj.valueOf(),如果执行结果是原始值，返回
+3.否则调用 obj.toString() 如果执行结果是原始值，返回
+4.抛出异常
+preferredType 如果是string ,则调换2，3 顺序
+
+toString 用来返回对象的字符串表示
+let obj ={} obj.toString() => '[Object object]'
+let arr = [] arr.toString() => ''
+ler data = new Date() data.toString() => 'sun  ...'
+
+valueOf 返回对象的原始值，可能是字符串，数值或者bool值等，看具体的对象
+
+var a={};
+ToPrimitive(a)
+分析:a是对象类型但不是Date实例对象,所以preferredType默认是Number,先调用a.valueOf()不是原始值,继续来调
+用a.toString()得到string字符串,此时为原始值,返回之.所以最后ToPrimitive(a)得到就是"[object Object]".
+
+[] => toPrimitive([]) => '' => 0
+![] => false => 0
+
+0 == 0 => true
+
+需要注意的 [字符串数值常量] 和 [数值常量] 语法上的不同：
+1.字符串数值常量 之前和、 或之后可以有空白和/或者结束符
+2.十进制的[字符串数值常量]可有任意数位的 0在前头
+3.十进制的[字符常量数值] 可有指示其符号的+ 或 -前缀
+4.空的，或只包含空白的[字符串常量] 会被转换为+0
+
+总结：
+1.undefined == null，结果是true。且它俩与所有其他值比较的结果都是false
+2.String == Boolean，需要两个操作数同时转为Number
+3.String/Boolean == Number，需要String/Boolean转为Number。
+4. Object == Primitive，需要Object转为Primitive(具体通过valueOf和toString方法)。
+5.ToPrimitive({},string) => {}.toString => '[Object object]'
+  ToPrimitive([],string) => {}.toString => ''
+
+
+最近正好在看一些相关的东西，总结来说JS中进行  A+B  这种操作时会经历这样一个过程：
+将A和B都转换为原始值(primitive，执行ToPrimitive)，这里记为A1，B1
+如果A1和B1中有一个值为string，则将A1、B1都转换为string（执行ToString），其值记为A2、B2，将A2 B2连接后就是A+B的结果
+否则的话将A1、B1都转换为number（执行ToNumber），其值记为A3、B3，将A3 B3相加即为A+B的结果ToPrimitive(obj,preferredType)
+
+JS引擎内部转换为原始值ToPrimitive(obj,preferredType)
+函数接受两个参数，第一个obj为被转换的对象，
+               第二个preferredType为希望转换成的类型（默认为空，接受的值为Number或String）
+               在执行ToPrimitive(obj,preferredType)时如果第二个参数为空并且obj为Date的实例时，
+               此时preferredType会被设置为String，
+               其他情况下preferredType都会被设置为Number如果preferredType为Number，
+               ToPrimitive执行过程如下：
+                   如果obj为原始值，直接返回；
+                   否则调用 obj.valueOf()，如果执行结果是原始值，返回之；
+                   否则调用obj.toString()，如果执行结果是原始值，返回之；
+                   否则抛异常。
+                   如果preferredType为String，
+                   将上面的第2步和第3步调换，即：如果obj为原始值，直接返回；
+                   否则调用obj.toString()，如果执行结果是原始值，返回之；
+                   否则调用 obj.valueOf()，如果执行结果是原始值，返回之；
+                   否则抛异常。
+
+三种隐式转换：
+1.将值转为原始值，ToPrimitive()
+2.将值转为数值，ToNumber()
+3.将值转为字符串，ToString()
+
+1.ToPrimitive(input, PreferredType?)
+  如果PreferredType被标记为Number
+  1、如果输入的值已经是一个原始值，则直接返回它
+  2、否则，如果输入的值是一个对象，则调用该对象的valueOf()方法，
+   如果valueOf()方法的返回值是一个原始值，则返回这个原始值。
+  3、否则，调用这个对象的toString()方法，如果toString()方法返回的是一个原始值，则返回这个原始值。
+  4、否则，抛出TypeError异常。
+ 如果PreferredType被标记为String
+  1、如果输入的值已经是一个原始值，则直接返回它
+  2、否则，调用这个对象的toString()方法，如果toString()方法返回的是一个原始值，则返回这个原始值。
+  3、否则，如果输入的值是一个对象，则调用该对象的valueOf()方法，
+   如果valueOf()方法的返回值是一个原始值，则返回这个原始值。
+  4、否则，抛出TypeError异常。
+ 如果没有设置：
+  1、该对象为Date类型，则PreferredType被设置为String
+  2、否则，PreferredType被设置为Number
+
+对于{} ，[]
+{}.valueOf() => {} 因此 {}.toString() =>'[Object object]'
+[].valueOf() => [] 因此 [].toString() => ''   
+
+valueOf()方法 和ToString() 
+js常见的内置对象：Date,Array,Math,Number,Boolean,String,Array,Regexp,Function
+valueOf()
+Number，Boolean,String 这三种构造函数生成的基础值的对象形式，通过ValueOf转换后变成相应的原始值
+var num = new Number('123');
+num.valueOf(); // 123
+
+var str = new String('12df');
+str.valueOf(); // '12df'
+
+var bool = new Boolean('fd');
+bool.valueOf(); // true
+Date这种特殊的对象，其原型Date.prototype上内置的valueOf函数将日期转换为日期的毫秒的形式的数值。
+var a = new Date();
+a.valueOf(); // 1515143895500
+
+除此之外返回的都为this，即对象本身：(有问题欢迎告知)
+var a = new Array();
+a.valueOf() === a; // true
+var b = new Object({});
+b.valueOf() === b; // true
+
+toString()
+var num = new Number('123sd');
+num.toString(); // 'NaN'
+var str = new String('12df');
+str.toString(); // '12df'
+var bool = new Boolean('fd');
+bool.toString(); // 'true'
+var arr = new Array(1,2);
+arr.toString(); // '1,2'
+var d = new Date();
+d.toString(); // "Wed Oct 11 2017 08:00:00 GMT+0800 (中国标准时间)"
+var func = function () {}
+func.toString(); // "function () {}"
+
+2.垂直水平垂直的方法：
+  flex:
+  设置父容器：flex+justify-content + align-item
+  <div class="parent">
+  <div class="child">Demo</div>
+  </div>
+
+  <style>
+   .parent {
+    display: flex;
+    justify-content: center; /* 水平居中 */
+    align-items: center; /*垂直居中*/
+    }
+  </style>
+
+  table:水平垂直居中
+  inline-block + text-align + table-cell + vertical-align
+  <div class="parent">
+  <div class="child">Demo</div>
+  </div>
+  <style>
+  .parent {
+    text-align: center;//水平居中
+    display: table-cell;
+    vertical-align: middle;//垂直居中
+  }
+  .child {
+    display: inline-block;//防止块级元素宽度独占一行，内联元素可不设置
+  }
+ </style>
+3.absolute+transform 水平垂直居中
+  <div class="parent">
+  <div class="child">Demo</div>
+</div>
+<style>
+  .parent {
+    position: relative;
+  }
+  .child {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+</style>
+缺点：微信容易闪退
+
+4.relative+absolute + negative margin
+  .parent{
+    position:relative;
+}
+.child{
+     width: 100px;
+     height: 100px;
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     margin: -50px 0 0 -50px;
+}
+缺点：必须知道子元素的宽高
+
+5.绝对定位方式+四个方向置0
+  子元素可以是块级元素也可以是行内元素，没有影响
+  .parent{
+    position:relative
+  }
+  .child{
+    margin:auto;
+    height: 100px;
+    width: 100px;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+  }
+  缺点：需设置子元素宽高，否则子元素将与父元素宽高一致
+6.line-height+text-align文本水平垂直居中
+  <div class="parent">
+    <div class="child">Demo</div>
+  </div>
+ .child{
+    text-align: center;
+    width: 100px;
+    height: 100px;
+    line-height: 100px;
+    /*display: inline-block;*/内联元素设置
+  }
+  水平居中
+  对于行内元素(inline)：text-align: center;
+  对于块级元素(block)：设置宽度且 marigin-left 和 margin-right 是设成 auto
+  对于多个块级元素：对父元素设置 text-align: center;，对子元素设置 display: inline-block;；或者使用 flex 布局
+  垂直居中
+  对于行内元素(inline)
+
+   单行：设置上下 pandding 相等；或者设置 line-height 和 height 相等
+   多行：设置上下 pandding 相等；或者设置 display: table-cell; 和 vertical-align: middle;；或者使用 flex 布局；或者使用伪元素
+   对于块级元素(block)：下面前两种方案，父元素需使用相对布局
+   已知高度：子元素使用绝对布局 top: 50%;，再用负的 margin-top 把子元素往上拉一半的高度
+   未知高度：子元素使用绝对布局 position: absolute; top: 50%; transform: translateY(-50%);
+   使用 Flexbox：选择方向，justify-content: center;、
+
+
+
+*手写一个 Linux 路径访问器
+在 Linux 和 Mac 中，..代表上一级目录，.代表当前目录； 
+现在提供一个目录字符串，比如/a/b/.././d，结果应该得到/a/d，使用 JS 实现；
+思路：先通过split方法，把参数拆成一个['a', 'b', '..', '.', 'd'] 这样的数组，然后再遍历得到最终的结果；
+
+
+
+
+
+

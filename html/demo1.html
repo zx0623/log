@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>二/三栏布局</title>
+</head>
+<style>
+  /* 二列布局 */
+
+  .wrap {
+    display: flex;
+    height: 100px;
+  }
+
+  .one {
+    background: pink;
+    flex: 0 0 200px;
+  }
+
+  .two {
+    background: green;
+    flex: 1;
+  }
+
+  .wrap1 {
+    margin-top: 20px;
+    overflow: hidden;
+  }
+
+  .one1,
+  .two1 {
+    height: 100px;
+  }
+
+  .one1 {
+    float: left;
+    background: red;
+    width: 200px;
+  }
+
+  .two1 {
+    background: pink;
+    width: 100%;
+  }
+
+  .wrap2 {
+    margin-top: 20px;
+    overflow: hidden;
+  }
+
+  .one2,
+  .two2 {
+    height: 100px;
+  }
+
+  .one2 {
+    float: left;
+    background: yellow;
+    width: 200px;
+    overflow: hidden;
+  }
+
+  .two2 {
+    background: pink;
+    width: 100%;
+  }
+</style>
+
+<body>
+  <!-- 二栏布局的实现方式
+      1. flex flex: 0 0 200px; flex:1 可以给第一个元素设置宽度(overflow:hiddle)，但是如果flex:1 的内容过多，就回挤压第一元素的宽度。
+      2. float+margin
+      3. float+ overflow:hiddle
+      4. grid
+      如果给一个浮动元素加上相反方向的负margin，则会使行间距为0且内容重叠。
+      这对于创建1列是100%宽度而其他列是固定宽度（比如100px）的自适应布局来说是非常有用的方法
+      -->
+  <div class="wrap">
+    <div class="one">one</div>
+    <div class="two">two</div>
+  </div>
+  <div class="wrap1">
+    <div class="one1">one</div>
+    <div class="two1">two</div>
+  </div>
+  <div class="wrap2">
+    <div class="one2">one</div>
+    <div class="two2">two</div>
+  </div>
+</body>
+
+</html>

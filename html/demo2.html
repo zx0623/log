@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>比翼双飞和圣杯模型</title>
+</head>
+<style>
+  /* grid 
+
+  .middle {
+    grid-area: middle;
+    background-color: pink;
+  }
+
+  .left {
+    grid-area: left;
+    background-color: red;
+  }
+
+  .right {
+    grid-area: right;
+    background-color: blue;
+  }
+
+  .header {
+    grid-area: header;
+    background-color: yellow;
+  }
+
+  .footer {
+    grid-area: footer;
+    background-color: gray;
+  }
+
+  .wrap {
+    display: grid;
+    grid-template-areas: "header header header" "left middle right" "footer footer footer";
+    grid-template-columns: 150px 1fr 150px;
+    grid-template-rows: 150px 1fr 150px;
+    text-align: center;
+    height: 500px;
+    width: 500px;
+  }
+  <div class="wrap">
+    <div class="header">header</div>
+    <div class="middle">middle</div>
+    <div class="left">left</div>
+    <div class="right">right</div>
+    <div class="footer">footer</div>
+  </div>
+  */
+
+  /* margin+float+position:releative 
+
+  .header,
+  .footer {
+    height: 30px;
+    text-align: center;
+    background: gray;
+  }
+
+  .wrap {
+    overflow: hidden;
+    padding: 0 200px;
+  }
+
+  .middle,
+  .left,
+  .right {
+    float: left;
+    min-height: 130px;
+    position: relative;
+  }
+
+  .middle {
+    width: 100%;
+    background: pink;
+  }
+
+  .left {
+    margin-left: -100%;
+    background: blue;
+    width: 200px;
+    left: -200px;
+
+  }
+
+  .right {
+    background: yellow;
+    margin-left: -200px;
+    width: 200px;
+    right: -200px;
+  }
+
+  .footer {
+    clear: both;
+  }
+*/
+
+  /*  margin+float+box-size:border-box  */
+
+  .header,
+  .footer {
+    height: 30px;
+    text-align: center;
+    background: gray;
+  }
+
+  .wrap {
+    overflow: hidden;
+  }
+
+  .middle,
+  .left,
+  .right {
+    float: left;
+    min-height: 130px;
+  }
+
+  .middle {
+    width: 100%;
+    background: pink;
+    box-sizing: border-box;
+    padding: 0 200px;
+  }
+
+  .left {
+    margin-left: -100%;
+    background: blue;
+    width: 200px;
+  }
+
+  .right {
+    background: yellow;
+    margin-left: -200px;
+    width: 200px;
+  }
+
+  .footer {
+    clear: both;
+  }
+</style>
+
+<body>
+  <!-- 圣杯模型和比翼双飞模型主要的特指
+       1.首先加载的是中间部分，其次是左边，然后是右边 
+       2.中间是自适应，二边是定宽
+       实现方法
+       1.grid
+       2.margin+float+position:releative父亲加padding 挤进去
+       3.margin+float+box-size:border-box  
+  -->
+  <div class="header">header</div>
+  <div class="wrap">
+    <div class="middle">middle</div>
+    <div class="left">left</div>
+    <div class="right">right</div>
+  </div>
+  <div class="footer">footer</div>
+</body>
+<script>
+  /*
+                                                                                    观察者模式：又称为发布-订阅者模式或者消息机制，定义了一种依赖关系，解决了主体对象与观察者之间功能的耦合 
+                                                                                        主要是三个方法：
+                                                                                               regist：注册消息，包括消息类型，和需要注册的消息本身
+                                                                                                 fire:发布消息，发布消息消息类型，需要处理的参数
+                                                                                               remove:移除掉改方法
+                                                                                   */
+  var Observer = (function() {
+    var _message = {};
+    return {
+      // 注册信息接口
+      regist: function(type, fn) {
+        // 如果此消息不存在则应该创造一个消息类型
+        if (typeof _message[type] === 'undefined') {
+          //将动作推入到该消息对应的动作执行队列中
+          _message[type] = [fn];
+        } else {
+          _message[type].push(fn);
+        }
+      },
+      // 发布信息 
+      fire: function(type, args) {
+        // 如果该消息没有被注册，则返回
+        if (!_message[type]) return
+        // 定义消息信息
+        var events = {
+            type: type,
+            args: args || {},
+          },
+          i = 0,
+          len = _message[type].length;
+        for (; i < len; i++) {
+          _message[type][i].call(this, events);
+        }
+      },
+      //移除信息 ? 如果要移除全部摸个类型的方法
+      remove: function(type, fn) {
+        // 如果消息动作存在
+        if (_message[type] instanceof Array) {
+          // 从最后一个消息动作遍历
+          var i = _message[type].length - 1;
+          for (; i >= 0; i--) {
+            // 如果存在该动作则在消息动作序列中移除相应动作
+            _message[type][i] === fn && _message[type].splice(i, 1);
+          }
+        }
+      },
+    }
+  })();
+  // Observer.regist('test', function(e) {
+  //   console.log(e.args.msg)
+  // })
+  // Observer.fire('test', {
+  //   msg: '123'
+  // });
+
+  /*
+   也可以封装成类 class
+   class EventEmitter{
+     constructor(){
+       this.listeners = new Map();
+     }
+     addListeners(label,callback){}
+     removeListener(label,callback){}
+     emit(label,...args){}
+   }
+  */
+  /*
+    用链表实现队列
+    1.队列先进先出
+
+    链表：是一组节点组成的集合，每个节点都使用一个对象的引用来指向它的后一个节点。指向另一个点的引用讲做链。
+
+  */
+  function Node(element) {
+    this.element = element; // 当前节点元素
+    this.next = null; // 下一个节点的连接
+  }
+
+  function LList() {
+    this.head = new Node('head');
+    this.shift = shift;
+    this.push = push;
+    this.find = find;
+    this.display = display;
+  }
+
+  function shift() {
+    var currNode = this.head;
+    while (!(currNode.next == null) && (currNode.next.element)) {
+      currNode = currNode.next;
+    }
+    if (!(currNode.next == null)) {
+      currNode.next = currNode.next.next;
+    }
+  }
+
+  function find(item) {
+    var currNode = this.head;
+    while (currNode.element != item) {
+      currNode = currNode.next;
+    }
+    return currNode;
+  }
+
+  function push(newElement, item) {
+    var newNode = new Node(newElement);
+    var currNode = this.find(item);
+    newNode.next = currNode.next;
+    currNode.next = newNode;
+  }
+
+  function display() {
+    var currNode = this.head;
+    while (!(currNode.next == null)) {
+      console.log(currNode.next.element);
+      currNode = currNode.next;
+    }
+  }
+  var fruits = new LList();
+
+  fruits.push('Apple', 'head');
+  fruits.push('Banana', 'Apple');
+  fruits.push('Pear', 'Banana');
+  fruits.push('Grape', 'Pear');
+  console.log(fruits.display())
+  fruits.shift();
+  console.log(fruits.display())
+</script>
+
+</html>

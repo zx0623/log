@@ -1,0 +1,61 @@
+1.location.href 常见的几种形式
+ self.location.href  // 当前页面打开 URL页面
+ window.location.href // 当前页面打开URL页面
+ this.location.href // 当前页面打开URL页面
+ location.href // 当前页面打开URL页面
+ parent.location.href // 在父亲面打开新的连接
+ top.location.href //在顶层页面打开新页面    
+ 1.如果自定义的是 frame 那么将parent、self、top 换成自定义frame 的名称，效果实在frame 窗口打开url 连接
+ 2.window.location.href = window.location.href 和 window.location.reload() 都是刷新当前页面。
+   区别在于是否提交数据，当有提交数据的时候，window.location.reload() 会提示是否提交
+   window.location.href 直接跳转到指定的url
+ 3.window.location.open 肯定被屏蔽掉。
+2.top.location.href 是最外层的页面的转跳
+  window.location.href location.href 是本页面的跳转
+  parent.location.href 是上一层页面转跳
+3.window.location.href 和 window.open的区别 
+  window.open()是可以在一个网站上打开另外的一个网站的地址 
+  window.location()是只能在一个网站中打开本网站的网页
+4.js 当前页面刷新
+  reload 方法，该方法强迫浏览器刷新当前页面 
+  location.reload(bForceGet) 可选参数，默认是 false，从客户端缓存里面取当前页。
+                                           true ，则是以get 方式，从服务器取最新的页面，相当于F5刷新。
+  replace 该方法通过指定URL替换当前缓存在历史里的项目，因为使用replace方法后，不能通过前进和后退 来访问已经被替换的URL
+  location.replace(URL) 
+5.js 刷新的页面的方法：
+  history.go(0)
+  history.reload()
+  location = location
+  location.assgin(location)
+  document.execCommand('Refresh')
+  window.nvigate(location)
+  location.replace(location)
+  document.URL = location.href  
+  自动刷新： 
+  <meta http-equiv="refresh" content="20">     // 20 是指每隔 20秒刷新以此页面
+  自动转跳页面
+  <meta http-equiv="refresh" content="20;url=http://www.xxx.net">    // 其中20指隔20秒后跳转到http://www.xxx.net页面
+
+6.http-equiv 属性 --- HTTP 协议的响应报文
+  此属性出现的在meta 属性中，
+  HTTP 协议的响应头报文
+  此属性的HTTP协议的响应头报文的值应使用content属性来描述
+  1.Content-Type Content-Language 显示字符集的设定
+    <meta http-equiv="Content-Type" Content="text/html; Charset=gb2312″ />
+    <meta http-equiv="Content-Language" Content="zh-CN" />
+  2.refresh 让页面多久刷新自己，或者在多长时间后网页自己转跳到其他页面。
+    <meta http-equiv="Refresh" Content="30″>
+    <meta http-equiv="Refresh" Content="5; Url=http://www.microsoft.com" /> 
+  3.Expires(期限) 指定网页在缓存中的过期时间，一旦网页过期，必须到服务器上重新调阅
+    <meta http-equiv="Expires" Content="0″ />
+    <meta http-equiv="Expires" Content="Wed, 26 Feb 1997 08:21:57 GMT" />
+  4.pragma 禁止浏览器从本地的缓存中调阅页面的内容
+    <meta http-equiv="Pragma" Content="No-cach" />  
+  5.Set-Cookie (cookie 设定) 
+    说明：浏览器访问某个页面时会将cookie存放到缓存中，下次再次访问时就可以从缓存中读取，以提高速度
+         例如：当你希望访问者每次都刷新你广告图标，或者每次都刷新你的计时器，就要禁止缓存了。
+         用法：<meta http-equiv="Set-Cookie" Content="cookievalue=xxx; expires=Wednesday,21-Oct-98 16:14:21 GMT; ath=/">
+  6.window-target 显示窗口的设定
+    说明：强制页面在当前窗口以独立页面显示
+    用法  <meta http-equiv="Widow-target" Content="_top">   
+         Content选项：_blank、_top、_self、_parent。

@@ -1,0 +1,73 @@
+react 构建组件的方法：
+1.React.createClass 
+  兼容性最好，最传统
+  const Button = react.createClass({
+    getDefaultProps(){
+      return{
+        color:'blue',
+        text:'Confirm',
+      }
+    }
+    render(){
+      <div></div>
+    }
+  })
+  会被解析成React.createElement(Button)方法来创建 Button 实例，
+2.ES6 classes
+  import React,{Component} from 'react'
+  class Button extends Component{
+
+  }
+  内部调用方法，变成用类来实现。与createClass 的结果相同的是，调用类实现的组件会创建实例对象
+
+3.无状态函数
+  Function Button({color = 'blue', text='Confire'}){
+    return(
+     <button />
+    )
+  }
+  无状态组件只传入props 和context 二个参数，也就是，她不存在state,也没有生命周期的方法，
+  避免内存分配，做好内部优化
+组件生命周期：
+组件挂载：
+读取state+props中属性 componentWillMount => render => componentDidMount
+如果在componentWillMount中执行setState方法，组件会更新state,但是只会渲染一次。
+如果在componentDidMount中执行setState方法，组件会更新，会渲染二次
+componentWillUnmount 清理一些方法，回收会清除定时器。
+
+数据更新过程：
+组件自生的 state,那么会一次执行shouldComponentUpdate => componentWillUpdate => render => componentDidUpdate
+shouldComponentUpdate 他需要接受更新的props,state,让开发者增加必要的条件判断，让其在需要的时候更新。 该方法返回 false的时候，组件不会再向下执行生命周期
+默认的情况下，shouldComponentUpdate默认返回true
+不能再componentWillUpdate 中setState
+
+如果组件是由父组件props更新的，componentWillReceiveProps => shouldComponentUpdate => componentWillUpdate => render => componentDidUpdate
+
+DOM 真正被添加到HTML中生命周期方法是 componentDidMount 和 componentDidUpdate
+
+refs:组件被调用时会创建一个组件的实例，而refs就会指向这个实例。
+
+Virtual Dom 在内存中是以对象的形式存在的，如果想要在这些对象上添加事件，就会非常简单。
+react基于Virtual DOM 实现了一个SynthticEvent(合成事件)层，我们所定义处理器会接受到一个SynthticEvent 对象的实例。
+所以的合成事件都是绑在最外层，如果需要访问原生的事件，可以使用 nativeEvent
+合成事件的实现机制：
+事件委托、自动绑定
+事件委托：
+自动绑定：在react组件中，每个方法的上下文都会指向改组件的实例，即自动绑定this为当前组件。
+手动绑定this:
+  1.bind
+    绑定事件处理器内的this并且向事件处理器中传递参数
+  2.构造函数中生命
+    在构造函数中完成this 的绑定
+  3.箭头函数
+    自动绑定this 
+在react 中使用原生事件：
+   在componentDidMount()中调用原生
+   在组件卸载时候，手动移除，
+受控组件：
+   
+ 
+         
+
+
+

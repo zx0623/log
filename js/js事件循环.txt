@@ -1,0 +1,66 @@
+1.深入理解js事件循环机制
+ timers 
+ I/O callback
+ idle， prepare
+ poll  <=  incoming:connections,data,etc
+ check
+ close callback 
+.timers阶段：这个阶段执行timer(setTimeout setInterval) 的回调
+.I/O callback阶段：执行一些系统调用错误，比如 网络通信的错误回调
+.idle,prepare阶段：仅node 内部调用
+.poll 阶段：获取新的I/O事件，适当的条件下node将阻塞在这里
+.check阶段：执行setImmediate() 的回调
+.close callback阶段：执行socket 的close 时间回调
+
+timers阶段：timers 是事件循环的第一个阶段，Node 会去检查有无已过期的timer，如果有则把它的回调压入timer的任务队列中等待执行
+但是把它们放到一个I/O回调里面，就一定是 setImmediate() 先执行，因为poll阶段后面就是check阶段
+
+poll阶段：
+    处理poll队列的事件
+    当有超时的timer,执行它的回调函数
+even loop 将同步执行poll队列里的回调，直到队伍为空或执行回调达到系统上线，
+接下来even loop 会去检查有无预设的setImmediate():分为二种情况：
+1.若有预设的setImmediate(),even loop 将结束poll阶段进入check 阶段，并执行check阶段的任务队列
+2.若没有预设的setImmediate(),even loop 将阻塞在该阶段等待
+
+没有setImmediate()会导致event loop阻塞在poll阶段，这样之前设置的timer岂不是执行不了了？
+所以咧，在poll阶段event loop会有一个检查机制，检查timer队列是否为空，如果timer队列非空，
+event loop就开始下一轮事件循环，即重新进入到timer阶段
+
+check 阶段：
+setImmediate()的回调会被加入check队列中， 从event loop的阶段图可以知道，check阶段的执行顺序在poll阶段之后。
+event loop 的每个阶段都有一个任务队列
+当 event loop 到达某个阶段时，将执行该阶段的任务队列，直到队列清空或执行的回调达到系统上限后，才会转入下一个阶段
+当所有阶段被顺序执行一次后，称 event loop 完成了一个 tick
+
+node.js 与 浏览器 Event Loop 差异：
+浏览器环境下：microtask 的任务队列是每个macrotask 执行完之后执行。
+node.js中,microtask 会在事件循环的各个阶段之间执行，会就是一个阶段执行完毕，就会去执行microtask队列的任务
+
+process.nextTick() VS setImmediate()
+process.nextTick() 会在各个事件阶段之间执行，一旦执行，要直到nextTick() 队列被清空，才会进入到下一个阶段，
+所以如果递归调用 process.nextTick()，会导致出现I/O starving（饥饿）的问题
+总结：
+Node.js 的事件循环分为6个阶段
+浏览器和Node 环境下，microtask 任务队列的执行时机不同
+Node.js中，microtask 在事件循环的各个阶段之间执行
+浏览器端，microtask 在事件循环的 macrotask 执行完之后执行
+递归的调用process.nextTick()会导致I/O starving，官方推荐使用setImmediate()
+    
+浏览器至少有一个时间循环，一个时间循环至少有一个任务队列(macrotask),每个外任务都有自己的分组，浏览器会为不同的任务组设置优先级。
+macrotask：包含执行整体js代码，事件回调，XHR回调，定时器（setTimeout/setInterval/setImmediate），IO操作，UI render
+microtask: 更新应用程序状态的任务，包括Promise回调，MutationObserver,process.nextTick,Object.observe
+
+一次事件循环的步骤包括:
+1. 检查macrotask队列是否为空，非空则到2，为空则到3
+2. 执行macrotask中的一个任务
+3. 继续检查microtask队列是否为空，若有则到4，否则到5
+4. 取出microtask中的任务执行，执行完成返回到步骤3
+5. 执行视图更新
+
+总结：
+事件循环是js实现异步的核心
+每轮事件循环分为3个步骤：
+a) 执行macrotask队列的一个任务
+b) 执行完当前microtask队列的所有任务
+c) UI render

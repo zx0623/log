@@ -1,0 +1,521 @@
+Css 
+float
+1.脱离文档流，只是部分脱离文档，脱离了dom,单任然占据空间
+2.按照指定方向发生移动，遇到父级边界或者相邻的浮动元素停了下来
+常用解决浮动的方法
+1.在浮动元素下方添加空div, 并给该元素写css 样式 
+  {
+    clear:both;
+    height:0;
+    overflow:hidden;
+  }
+2.给浮动元素父亲设置高度
+  缺点：父亲元素高度不确定的时候，就不适用
+3.给父级添加
+{
+  overflow: hiddle;
+  *zoom: 1;
+}
+4.万能清除after伪类清除浮动
+  :after{
+    content:'',
+    clear: both;
+    display:block;
+    height:0;
+    overflow:hidden;
+    visibility:hidden;
+  }
+2.display:inline-block;
+ 二个盒子
+ 外在盒子：负责元素可以显示一行，还是换行
+ 容器盒子：负责宽高和内容呈现。
+3. width:100px
+div 的默认padding、margin、border 全都是0
+设置width是作用在content-box上的，
+4.box-sizing：改变width 作用的细节，
+ 其实只有二个值：
+ box-sizing: content-box;
+             border-box;
+ border-box:就是让div的100px 直接作用在border-box
+ box-sizing 的默认值是：content-box;
+ 5.为何height:100% 无效
+ 原因：首先下载文档内容，加载头部的样式资源，然后从上而下的、由外到内的的顺序渲染DOM的内容。
+ 6.如何让元素的高度支持100%；
+   使用绝对定位
+   绝对定位元素的宽高百分比计算，是相对于padding box 计算的
+   非绝对定位的宽高是相对于context-box 计算的
+7.min-width min-height max-width max-height
+  max-height max-width  默认值是none
+  min-height min-width  默认值是auto
+  max-width  会超越 width ， max-height 也会超越height
+  min-width 会超越 max-width
+
+替换元素：内容可以被替换 img,object,video,iframe input textarea
+替换元素的特点：
+          1.内容的外观不受页面的css的影响 如appearance
+          2.有自己的默认尺寸
+          3.有自己默认的一套css 
+8.替换元素的默认：display值
+          img   inline
+          iframe  inline
+          video  inline
+          select  inline-block
+          input  inline-block
+          button inline-block
+          textarea  inline  
+9.input 和 button 的区别是：  white-space 值不一样，input是pre ,button是normal
+10.替换元素的尺寸计算规则
+    1.固有尺寸（图片实际尺寸）（优先级最低）
+    2.标签上的width height  属性 （优先级其次）
+    3.css 尺寸（优先级最高）
+图片资源的固有尺寸是无法改变的。
+11.content辅助元素生成的内容，清除浮动， .clear:after{
+                                      content：'';
+                                      display:table;
+                                      clear:both;
+                                     }
+12.content字符内容生成
+   content 字符内容生成就是直接写入字符内容，中英文都可以，比较常见的就是配合@font-face 规则实现图标字体的实现，
+   生成计数器
+    content-reset：计数器重置
+    content-increment: 计数器递增
+13.css 默认的box-sizing:content-box  所以添加padding会增加总体的宽高度  
+
+14.css影响堆叠效果的：
+position：releative abolute fixed
+box-shadow 
+outline 
+background-color
+background-image 
+border
+overflow 
+z-index
+15.padding的百分比
+   padding的属性是不支持负值
+   padding支持百分比，padding的百分比无论是水平方向还是垂直方向均是相对于宽度计算的
+   padding 是会断行的，padding区域是跟着内联盒模型中的行框盒子走
+   font-size:0 ，解决宽高不一样的情况
+16.
+  1.ol/ul 列表内置 padding-left,单位是px 不是em.
+  2.许多表单都有内置padding,
+    input textarea 输入款内有内置padding
+    button 按钮内置padding
+    select 下拉 内置padding
+    radio checkbox 无内置padding
+ 17.a 标签下的img高度比a 标签小？？？
+    原因：img 默认的对齐方式是baseline，所以下方可能出出现空隙
+    解决方法：
+    a{
+      display:block;
+      background-color:#000;
+      color:fff
+      line-height:0; // 行内元素line-height:0 或者 font-size:0 让top,baseline bottom 三线重叠  
+    }
+    img{
+     /*包含块a下的img默认行内元素对齐方式baseline*/
+    /*display: block;消除vertical-align影响vertical-align只对inline-level|table-cell起作用*/
+    /*vertical-align: text-top|text-bottom|top|middle|bottom;*/
+   }
+18.margin
+  1.利用负margin的值来实现二端对齐的布局的效果。  
+  2.writing-mode 改变流向为垂直方向，margin:auto  
+  3.margin 的百分比 都是相对于自身宽度计算的
+19.对于内联元素 非替换的那种，入span a ;margin-top,margin-bottom,padding-top,padding-bottom 并不会起作用的
+   对于替换元素 padding , margin ,width ,height  都会起作用的。
+19.margin 合并
+   块级元素的上外边距（margin-top） 与下边距（margin-bottom）有时候合并为单个外边距，这种现象称为“margin 合并”
+   1.块级元素
+   2.发生在垂直方向上
+   常见的margin合并的三种场景
+   1.相邻兄弟元素margin 合并
+   2.父级和第一个/最后一个子元素（常见）
+   3.空会计元素的margin合并   
+   如何阻止margin合并？
+   margin-top:
+    父亲设置块级化上下文元素 overflow:
+    父元素设置border-top
+    父元素设置padding-top
+    父元素和第一个元素之间添加内联元素进行分割
+   margin-bottom:
+    父亲设置块级化上下文元素 overflow:
+    父元素设置border-top
+    父元素设置padding-top
+    父元素和第一个元素之间添加内联元素进行分割 
+  margin合并的计算规则：
+    1.正正取大值
+    2.正负值相加
+    3.负负取最负
+20.深入理解 margin:auto 
+   1.margin:auto 是用来填充剩余的空间的，在css的世界里面，margin的初始值是0.如果想要某个元素右对齐，可以用margin-left:auto;
+    利用margin：auto 来实现水平垂直居中 知道孩子和父亲的宽高
+  .father{
+      position：releative;
+      width: 300px;
+      height:150px;
+    }
+   方法1
+    .son{       // son 表现格式化宽度和格式化高度，尺寸自动填充父级元素可尺寸。
+      position：absolute;
+      top:0;
+      right:0;
+      bottom:0;
+      top:0;
+      width:200px;
+      height:100px;
+      margin:auto;
+    }
+  方法2：其实top:50% 和margin 负一半高度
+ 21.
+   1. border 的颜色 默认颜色就是color 色值 
+   2. 利用透明的border 来增加点击区域的大小
+   3. 绘制三角形，性价比最高
+      div{
+        width:0;
+        border: 10px solid;
+        border-color: #f30 transparent transparent;
+      }  
+22. 
+1.x-height: 就是小写x的高度，就是基线和等分线之间的距离
+   ascender height :上下线高度
+   cap height : 大写字母高度
+   median: 中线
+   descender height: 下行线高度
+   vertical-align:middle => 1/2x-height   
+23.line-height: div的高度是由行高决定的
+   1.对于非替换的内联元素：其可视化高度完全是由line-height决定
+     “行距”分散在在当前文字的上方和下方，即使是第一行文字。
+     行距 = line-height - font-size
+   2.替换元素和块级元素
+     为什么说line-height让内联元素“垂直居中”  ？
+     .box{
+       line-height:120px;
+       background:red;
+     }
+     .content{
+       display:inline-block;
+       line-height:20px;
+       margin:0 20px;
+       vertical-align: center;
+     }
+     <div class='box'>
+       <div class='content'>232323232</div>
+     </div>
+    这里形成了一个“行框的盒子”，行框盒子产生了一个 空白节点 => 撑起来一个宽度为0的空白节点
+24. vertical-align
+    线类： baseline top middle bottom
+    文本类：text-top text-bottom
+    上标下标类： sub super
+    数值分类 :（当为数值的时候，相对于基线向上或者向下偏移，取决于正负值）
+    vertical-align 作用的前提： 
+        只能应用于内联元素以及display:table-cell 的元素
+        默认情况下：span strong block em 等，img button input 等替换元素，
+     
+25.间隙产生的原因：
+   幽灵空白节点、line-height、vertical-align属性
+   间隙产生的原因： 图片作为替换元素其基线就是自身的下边缘，默认和基线对齐，字母x 往下的行高产生的多余的间隙。就让图片看起来下面有空白部分。
+   解决方法：
+       1.图片块状化
+       2.容器line-height 足够小
+       3.font-size 足够小
+       4.设置 vertical-align 的其他值。
+神奇代码？
+ <div class="div3">
+    <img src="./WechatIMG82.jpeg" />
+  </div>
+  .div3 {
+    background-color: pink;
+    border: 1px solid #000;
+  }
+  .div3>img {
+    margin-top: -400px;
+    height: 100px;
+  }
+  原因:因为字符x的下边缘和图片下边缘对齐,字符x 非主动定位，不能跑到容器外面，不可能跑到容器外面，所以margin-top 失效
+26.inline-block 与 baseline 
+   baseline在文本之类的内联元素就是字符x的下边缘，对于替换元素就是替换元素的下边缘
+   神奇的错位：
+    .dib-baseline {
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    border: 1px solid #000;
+    background-color: red;
+    }
+    <div>
+    <span class="dib-baseline"></span>
+    <span class="dib-baseline">x-123</span>
+  </div>
+  对于： display:inline-block;
+        如果里面没有内联元素，或者overflow不是visible,则该元素的基线就是其margin底边缘；否则就是元素里面最后一行内联元素的基线。
+  分析：      
+  第一个span 里面没有内容，因此基线就是margin的下边缘，也就是下边款的位置。
+  第二个span 里面有字符，就是一个纯正的内联元素，因此它的基线就是x的下边。
+  解决方法：
+  1.因为是基线的标准不一样，因此，使用vertical-align来对齐基线。
+  2.overflow:hidden
+  总结：
+  1.图标高度和当前高度都是20px
+  2.图标标签里面永远有字符
+  3.最好不要用 overflow:hidden
+27.
+   vertical-align 只作用于：display:inline 或者display:inline-block的元素，并不作用于块级元素。
+   vertical-align:各个属性值的分析
+   vertical-align:top/bottom
+   内联元素：元素底部和当前行框盒子的顶部对齐
+   table-cell: 元素底padding 边缘和表格行的顶部对齐
+   vertical-align:middle 
+   内联元素：元素垂直中心和行框盒子基线往上1/2 x-height 对齐
+   table-cell: 单元格填充盒子相对于外面的表格行居中
+   vertical-align:text-top/text-bottom
+   盒子的顶部和父级内容区域顶部对齐
+28.应用
+  居中
+  .container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, .5);
+    text-align: center;
+    font-size: 0;
+    white-space: nowrap;
+    overflow: auto;
+  }
+
+  .container:after {
+    content: '';
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+  }
+
+  .dialog {
+    display: inline-block;
+    width: 300px;
+    height: 300px;
+    vertical-align: middle;
+    text-align: left;
+    font-size: 14px;
+    white-space: normal;
+    background-color: #fff;
+  } 
+   <div class="container">
+    <div class="dialog">123</div>
+  </div>  
+29.浮动的本质是实现文字环绕的效果
+   float的特性：
+   1.包裹性
+   2.块状化并格式化上下文
+   3.破坏文档流
+   4.没有任何margin合并
+31.自适应与包裹性
+   <div class="farter">
+    <div class="float">
+      <img src="./WechatIMG82.jpeg" / width="128px"> 啦啦啦啦阿啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦想问下我
+    </div>
+  </div>
+   .farter {
+    width: 200px;
+    border: 1px solid #000;
+  }
+
+  .float {
+    float: left;
+    vertical-align: middle;
+  }
+   包裹性：包裹里面的img
+   自适应：浮动元素宽度就自适应父亲的200px。
+   重点：设置浮动元素，在设置vertical-align 无效
+
+   块状化并格式化上下文 => 一旦设置元素的float的值，就会使其变成block. 除了，display:inline-table  会变成table
+
+32.clear：
+   clear: none; left; right; both;
+   clear: 只能作用域块级元素；而用::after 等伪元素默认元素都是内联元素，这就是要借助伪元素清除浮动影响时需要设置 display的原因
+   .clear:after{
+     content:'';
+     display:table;
+     clear:both;
+   }
+33.BFC 的定义：
+   BFC：block formatting context 块级格式化上下文
+   1.BFC 元素不可能发生margin 重叠的
+   2.BFC 可以用来清除浮动
+   什么时候会触发BFC？
+   1.<html> 根元素
+   2.float的值不为none
+   3.overflow：auto,scroll或者hidden
+   4.display:table-cell table-caption inline-block 中任意一个
+   5.position的值 不为relative和static
+   只要元素符合上面任意一个条件，就不需要使用clear:both属性清除浮动的影响。
+   BFC 与 流体布局
+   <div class="float">
+      <img src="./WechatIMG82.jpeg" / width="128px">
+      <p>啦啦啦啦阿啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦想问下我</p>
+      <p>啦啦啦啦阿啦啦啦啦啦啦啦啦啦啦啦啦啦啦啦想问下我</p>
+    </div>
+  </div>
+  因为img 设置了float，而使得周围的文字环绕，如果p标签具有BFC的特性的属性，如overflow:hidden;
+  重点：
+    1.BFC特性的元素，不会受外部元素的影响，也不会影响外部元素。
+    2.这就常用的二栏布局：
+      普通元素设置了overflow:hidden后，会自动填满容器除浮动元素以外的剩余空间。
+    3.overflow 剪裁界限border box ,而不是padding box 的边缘
+    4.在PC段，无论是什么浏览器，默认滚动条均来自<html>,而不是<body>
+    5.滚动条会占用可用宽度和高度。
+    6.依赖 overflow 的样式： 单行文字省略
+      .ell{
+        text-overflow:ellipsis;
+        white-space:nowrap;
+        overflow:hiddle;
+      }
+      二行文字显示：
+      .ell-rows-2{
+        display:-webkit-box;
+        -webkit-box-orient:vertical;
+        -webkit-line-clamp:2;
+      }
+ 34.position:abolute;
+    元素一旦设置 position:abolute 或者 fixed; 其display:block,
+    包含块：
+         1.根元素<html>被称为初始包含块，其尺寸是相对于浏览器可视窗口的大小。
+         2.对于其他元素,如果该元素的position 是releative 或者static，则"包含块"由其最近的块容器祖先盒的context box 边界形成。
+         3.如果元素的position：fixed 则“包含块”是“初始包含块”
+         4.如果元素position:absolute，则“包含块”由最近的position不为 static的祖先元素建立，具体如下：
+          和常规元素相比较，absolute 绝对定位元素的“包含块”有3个明显差异：
+           1.内联元素也可以作为“包含块”所在的元素
+           2.包含块所在不是父级块元素，而是最近position 不为 static 的祖先元素或者根元素
+           3.边界是padding-box 而不是 context-box
+35.height：100% height:inherit 的区别
+   对于普通元素来说，height：100% 和 height:inherit 是没有区别的
+   但是对于定位元素来说，height:100% 是第一个具有定位属性的元素
+36.absolute 是非常独立的css的属性，其样式和行为不依赖任何css 属性就可以完成。
+   经常用的是各类图标的定位，，我们经常在各类图标定位。
+37.absolute 与 overflow
+   如果overflow 不是定位元素，同是绝对定位元素和overflow 容器之间也没有固定元素，则overflow无法对absolute 元素进行剪裁
+   但是如果overflow 属性所在的元素同时也是固定元素，里面的绝对定位元素会被剪裁：
+   如果overflow和绝对定位元素中间有定位元素，里面的绝对定位元素会被剪裁
+38.position:fixed 的包含块是根元素
+39.clip
+   clip 要想起作用，必须绝对定位或者固定定位来使用
+   clip: rect(top,right,bottom,left)
+   fixed 固定定位的剪裁
+   .fixed-clip{
+     position:fixed;
+     clip:rect()
+   }
+40.当absolute遇到left 、top、right、bottom 的时候，absolute 才会变成绝对定位元素。   
+41.absolute 的margin:auto;
+   绝对定位元素水平垂直居中用法
+   （知道宽高）
+    .ele{
+      width: 300px;
+      height:300px;
+      position: absolute;
+      left:50%;
+      top:50%;
+      margin-left:-150px; /宽的一半
+      margin-top:-100px; / 高的一半
+    } 
+    .ele{
+      width:300px;
+      height:200px;
+      posotion:abolute;
+      left:50%;
+      right:50%;
+      transform:translate(-50%,-50%); /50%为自身的尺寸的一般
+    }
+    transform 会让ios 造成微信闪退
+    推荐使用：
+    .ele{
+      width: 300px;
+      height:200px;
+      position:absolute;
+      left:0;
+      right:0; 
+      top:0;
+      bottom:0;
+      margin:auto;
+    }
+42.z-index属性之有和定位元素（position 不为 static的元素）在一起的时候才会有作用，
+   可以是正数也可以是负数，理论上，数值层越大层数越高，但是实际更为复杂。
+   css3 的时候，flex 盒子元素也可以设置z-index 属性就可以完成。
+43.层叠上下文 
+   =>background/border 特指层叠上下文元素的边款和背景 
+   => 负z-index 
+   => block块状水平的盒子 
+   => float 浮动盒子 
+   => inline水平盒子 
+   => z-index：auto 或者 z-index:0 
+   => z-index >0
+  规则：
+  谁大谁谁上
+  后来居上
+  根层叠上下文：页面根元素，可以看成是<html>
+  对于position值为relative/absolute 以及含有position:fixed;声明的元素，当其z-index 值不为auto的时候，会创建层级上下文
+  如果z-index：auto 
+  z-index 一旦设置数值，就算是0 也会创建层叠上下文。
+  css3 的层叠上下文：
+    1.元素为flex的布局元素。
+    2.元素的opacity 值不是1.
+    3.元素的transform 值不是none。
+    4.元素的will-change 
+    5.-webkit-overflow-scrolling 设置为touch
+元素一旦设置成定位元素，其z-index就会自动生效，此时其z-index就是默认的z-index:auto;也就是0的级别
+更具层叠顺序表，就会覆盖inline block float 
+44.
+line-height是相对于font-size 计算的，而vertical-align的百分比是相对于line-height 计算的。
+45.
+  src 表示引入的字体资源可以是系统字体，也可以是外链接字体。
+  字体格式分为：.eot IE 私有
+              .woff web
+              .woff2 web
+              .ttf  android
+              .svg 格式是为了兼容IOS 4.1
+46.text-indent与内联元素缩进
+   1.text-indent 负值影藏文本的内容
+   2.text-indent 的百分比是相对于“包含块”计算的，而不是当前元素计算法的 
+   3.text-indent 仅仅是对第一行内联的盒子有效
+   4.非替换元素以外的display 计算值为inline的内联元素设置text-indent 值无效，如果计算值是inline-block、inline-table 则会生效。
+     如果父亲块级元素设置text-indent 属性的值，字inline-block inline-table  需要设置 text-indent：0重置
+   5.input 设置text-indent 无效
+   6.button 设置text-indent 有效，但是存在兼容性的问题
+47.letter-space word-space
+   1.都要继承性
+   2.默认值是normal
+   3.支持负值，都可以让文字重叠
+   4.都支持小数
+   5.受tetx-align:justify 二端对齐的影响   
+48.word-break
+   word-break:normal
+   word-break:break-all 
+   word-break:keep-all
+   word-wrap
+   word-wrap:normal
+   word-wrap:break-word
+   word-break:break-all 和 word-wrap:break-word 的区别？
+   word-break:break-all 全部都会换行，一点空隙都不留
+   word-wrap:break-word 能换行就换行，有空格或者CJK，在这些点换行
+49.white-space与换行和空格的控制
+   white-space声明如何处理空白字符  如：space enter tab 
+   normal:合并空白字符 换行符
+   pre: 空白不合并 内容只在换行符的地方换行
+   nowrap: 合并空白字符，单不允许文字环绕
+   pre-wrap: 空白不合并，文字在该换行的地方换行
+   pre-line: 合并空白 ，文字在该换行的地方换行
+   white-space 与最大可用宽度
+   1.包含块 尺寸过小处理
+   2.单行文字溢出点点点的效果
+   3.水平列表切换效果
+50.text-decoration 下划线和文本重叠的问题
+   text-decoration：underline 下划线
+   text-decoration: line-through 
+60.
+text-transform:uppercase
+text-transform:lowercase
+61.background-image加不加加载的问题？
+   1.display:none
+     IE依然会加载图片
+     FireFox不会加载图片
+     chrome 和 safari 似乎更加智能，如果是父亲的display:none ,则不会请求图片。   
