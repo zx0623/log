@@ -518,4 +518,4 @@ text-transform:lowercase
    1.display:none
      IE依然会加载图片
      FireFox不会加载图片
-     chrome 和 safari 似乎更加智能，如果是父亲的display:none ,则不会请求图片。   
+     chrome 和 safari 似乎更加智能，如果是父亲的display:none ,则不会请求图片。

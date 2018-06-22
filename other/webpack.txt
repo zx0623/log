@@ -1,0 +1,12 @@
+1.code Splitting的介绍
+  具体的做法就是一个分离点，在分离点中依赖的模块会被打包到一起，可以异步加载，一个分离点会产生一个打包文件
+  使用CommonJS风格的require.ensure作为分离点的代码
+  require.ensure(['module-a','module-b'],function(require){
+    var a = require('module-a');
+    var b = require('module-b');
+    var c = require('module-c');
+  })
+  分析：第一个参数是依赖列表，webpack会加载模块，但不会执行，
+       第二个参数是回调，在其中可以使用require载入模块
+       回调中的模块 ，依旧会被打入
+       

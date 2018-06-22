@@ -1,0 +1,67 @@
+web 安全（客户端）
+1.跨站脚本攻击（XSS）
+  解释：指的是恶意攻击者往Web页面里插入恶意html代码，当用户浏览该页之时，嵌入其中Web里面的html代码会被执行，从而达到恶意用户的特殊目的
+  XSS分类：
+  1.反射型XSS => 
+              简单吧用户输入的数据“反射”给浏览器
+              输入的数据是一段恶意脚本
+              往往需要诱惑用户“点击”一个恶意链接才能成功
+  2.存储型XSS =>
+              把用户输入的数据“存储”在服务器
+              输入的数据是一段恶意脚本
+              访问的用户可能会受到的脚本攻击
+  3.DOMBased XSS =>
+              通过修改页面的DOM 节点形成XSS
+
+如何解决？
+  1.httpOnly   => 浏览器不要在除HTTP（和 HTTPS)请求之外暴露Cookie
+  2.输入检查 客户端和服务端都要检查
+  3.输出检查，编码或者转义
+      => HTMLEncode
+      =>jsEncode
+      =>encodeForCss()
+      =>urlEncode
+ 4.处理富文本 
+     => 禁止自定义css和style
+5.防御DOM Based XSS 触发了js应使用jsEncode
+  输出到HTML内容或者属性要HtmlEncode
+
+2.跨站点请求伪造(CSRF)
+   解析：伪造成合法用户发起请求              
+   分类：
+
+   1.Session Cookie(临时Cookie) => 
+                      Session Cookie则没有指定Expire时间，所以浏览器关闭后，Session Cookie就失效了。
+                      Session Cookie保存在浏览器进程的内存空间中
+                      特性：<img> 等跨域加载资源时Session Cookie被发送成功 
+                
+   2.Third-party Cookie (本地Cookie) => 
+                      服务器在Set-Cookie 时指定看Expire时间，只有到了Expire时间后Cookie才会失效，所以这种Cookie 会保存在本地   
+                      某些浏览器会阻止Third-party Cookie的发送。
+                        特性：<img> 等跨域加载资源时Third-party Cookie被发送成功 ？
+                              Safari 会拦截 Third-party Cookie 
+                              chorme 不会拦截
+   3.不获取Cookie=>
+               如果用户访问了目标网站且同时打开攻击网站，攻击网站发送请求（post和get）如果服务器不区分请求方式，存在目标网站的临时Cookie，攻击成功
+               如果只允许Post 请求，构造form 表单的post请求，攻击成功
+   4.flash CSRF 
+如何解决?
+ 1.验证码
+ 2.Referer Check 
+    => 检测合法资源
+    => 单服务器不是什么时候都能获取到Refer
+ 3.cookie 
+   => cookie  不要放在URL中
+   => 使用post
+   => 有效生命周期内 token消耗掉前使用一个Token
+
+3.点击劫持 （ClickJacking ） => 视觉上欺骗的手段
+  一是攻击者使用一个透明的iframe，覆盖在一个网页上，然后诱使用户在该页面上进行操作，此时用户将在不知情的情况下点击透明的iframe页面；
+  二是攻击者使用一张图片覆盖在网页，遮挡网页原有位置的含义；
+如何解决：
+ X-Frame-Option
+   => DENY(拒绝当前页面加载任何frame页面)
+   => ALLOw_FRom origin 
+   => SAMEORIGIN  
+                
+          
