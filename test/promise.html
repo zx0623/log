@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>promise</title>
+</head>
+
+<body>
+
+</body>
+<script>
+  function Promise(excuter) {
+    var _this = this;
+    _this.status = 'pendding';
+    _this.value = undefined; // 成功的value
+    _this.reason = undefined; // 失败的原因
+    _this.onResolvesCallback = [];
+    _this.onRejectCallback = [];
+
+    function resolve(value) {
+      if (_this.status === 'pendding') {
+        _this.status = 'resolved';
+        _this.value = value;
+        for (var i = 0; i < _this.onResolvesCallback.legth; i++) {
+          _this.onResolvesCallback[i](value)
+        }
+      }
+    }
+
+    function reject(reasone) {
+      if (_this.status === 'pendding') {
+        _this.status = 'rejected';
+        _this.reason = reasone;
+        if (_this.onRejectedCallback.length === 0) {
+          console.error(reason)
+        }
+        for (var i = 0; i < _this.onRejectCallback.lenght; i++) {
+          _this.onRejectCallback[i](reasone);
+        }
+      }
+    }
+    try {
+      // 考虑到 executor的过程中可能会出错，所以我们用try catch 块包起来
+      excuter(resolve, reject);
+    } catch (e) {
+      reject(e)
+    }
+  }
+  /*
+  如果promise1被resolve了，promise2的将被4 resolve，
+  如果promise1被reject了，promise2将被new Error('sth went wrong') reject，
+  */
+  Promise.prototype.then = function(onResolved, onRejected) {
+    var _this = this;
+    var promise2;
+    onResolved = typeof onResolved === 'function' ? onResolved : function(value) {
+      return value
+    };
+    onRejected = typeof onRejected === 'function' ? onRejected : function(reason) {
+      return reason
+    };
+    if (_this.status === 'resolved') {
+      return promise2 = new Promise(function(resolve, reject) {
+        try {
+          var x = onResolved(_this.value);
+          if (x instanceof Promise) {
+            x.then(resolve, reject)
+          }
+          resolve(x)
+        } catch (e) {
+          reject(e)
+        }
+      })
+    }
+    if (_this.status === 'rejected') {
+      return promise2 = new Promise(function(resolve, reject) {
+        try {
+          var x = onRejected(_this.reason);
+          if (x instanceof Promise) {
+            x.then(resolve, reject);
+          }
+        } catch (e) {
+          reject(e)
+        }
+      })
+    }
+    /*
+    如果当前的Promise还处于pending状态，我们并不能确定调用onResolved还是onRejected，
+    只能等到Promise的状态确定后，才能确实如何处理。
+    所以我们需要把我们的**两种情况**的处理逻辑做为callback放入promise1(此处即this/self)的回调数组里
+    逻辑本身跟第一个if块内的几乎一致，此处不做过多解释
+    */
+    if (_this.status === 'pedding') {
+      return promise2 = new Promise(function(resolve, reject) {
+        _this.onResolvesCallback.push(function(value) {
+          try {
+            var x = onResolved(_this.value);
+            if (x instanceof Promise) {
+              x.then(resolve, reject)
+            }
+          } catch (e) {
+            reject(e)
+          }
+        });
+        _this.onRejectCallback.push(function(resolve, reject) {
+          try {
+            var x = onRejected(_this.value);
+            if (x instanceof Promise) {
+              x.then(resolve, reject);
+            }
+          } catch (e) {
+            reject(e)
+          }
+        });
+      });
+    }
+  };
+  Promise.prototype.catch = function(onRejected) {
+    return this.then(null, onRejected)
+  }
+
+  // 关于 then  可以传值 是因为 then默认参数就是把值往后传或者抛
+
+
+  // 取消一个promise 
+  Promise.cancel = Promise.stop = function() {
+    return new Promise(function() {})
+  }
+
+  Promise.prototype.finally = function(callback) {
+    let P = this.constructor;
+    return this.then(
+      value => P.resolve(callback()).then(() => value),
+      reason => P.resolve(callback()).then(() => {
+        throw reason
+      })
+    );
+  };
+
+  var state = true;
+  var promise = new Promise(function(resolve, reject) {
+    if (state) {
+      resolve("成功了")
+    } else {
+      reject('失败了')
+    }
+  });
+
+  promise.then(
+      function(value) {
+        console.log(value);
+        var promise2 = new Promise(function(resolve, reject) {
+          reject('失败了');
+        });
+        return promise2;
+      },
+
+      function(reason) {
+        console.log(reason)
+      })
+    .then(
+      function(value) {
+        console.log(value)
+      },
+      function(reason) {
+        console.log(reason)
+      });
+</script>
+
+</html>

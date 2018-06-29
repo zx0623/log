@@ -1,0 +1,52 @@
+箭头函数
+=> 没有this,super,arguments，和new.target绑定 箭头函数的 this,super,arguments，和new.target绑是有他外层非箭头函数决定的
+=>不能通过new 关键字调用
+=>没有原型
+=>不可以改变this 的绑定
+=>不支持arguments 对象
+=> 不支持重复参数名
+
+object.is()
+=> 全等运算 
+=> object.is(NaN,NaN); true
+=> Object.is(+0,-0); false
+=> super  可以更加快速的访问原型上的方法
+
+Symbol
+=> 由于Symbol是原始值，因此调用 new Symbol 会出错
+=> Symbol()可以接受一个可选参数，添加一段文字描述来创建Symbol,这个描述的属性，存储在内部的[[Description]]中，只有调用toString的时候，
+才会被阅读
+=> typeof Symbol  返回 Symbol
+=> 创建共享的Symbol 使用Symbol.for()
+
+Set 和Map
+Set经常用来检查对象中是否含有某个键名
+map集合常用来被用于获取已存的信息
+=> Set是一种有序的列表，其中含有一些互相独立的非重复的值，通过set 集合可以快速访问其中的数据，更有效的追踪各种离散值。
+=> new Set() 创建Set集合，调用add() 方法向集合添加元素，访问集合的size 属性可以获取集合中目前的元素数量。
+=>set.has() 判断是否有这个值
+=> 调用delete() 方法可以移除Set集合中的某一个元素
+=> forEach()
+Map 类型是一种存储着许多键值对的有序列表，其中的键名和对应的有序列表，其中的键名和对应的值支持所有的数据类型。
+=> set() 方法 并分别传入键名和对应值作为二个参数；
+=> get() 方法 从集合中获取信息
+=> has(key) 是否已经存在的
+=> delete(key) 删除对于的key
+=> clear() 移除Map 集合中的所有键值对。
+
+迭代器
+=> 是一种特殊对象，所有对象有一个next(),每次调用都返回一个结果对象。
+=> value: 将要返回的值
+   done:boolean ,没更多数据就返回true
+
+生成器
+=> 生成器 是返回迭代器函数，通过Function 关键字后的星号(*)来表示，函数中会用到新的关键字 yield.星号可以紧挨着function 关键字
+=> function *createItearator(){ yield1}
+
+promise
+先是处理进行中 pending 
+未处理:unsettled  一旦异步操作执行结果
+已处理：settle 的处理
+Promise时他会变成pendding,操作结束后，Promise可能进入一下状态：
+Fulfilled:
+Rejected:

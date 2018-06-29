@@ -1,0 +1,95 @@
+1.高阶函数
+  函数可以被当做参数
+  函数可以被当做返回值
+2.纯函数
+  若一个函数对相同的输入，永远会得到相同的输出，
+  并且不会影响该函数作用域以外的环境变量，则此函数称为纯函数。
+3.高阶组件
+=> 一个react组件包裹另外一个react组件
+HOCFactory ::W: React.component => E:React.component
+W => wrappedComponent 包裹的react.component
+E: => EnhancedComponent返回类型为react.component 的新的HOC
+模式1：
+props proxy
+function PPHOC(wrappedComponent){
+  return class PP extends React.component{
+    render(){
+      return <wrappedComponent {...this.props}/>
+    }
+  }
+}
+使用props proxy 的好处：
+1.操作 prosp （删除、添加、编辑、得到需要的props）
+2.通过refs访问组件实例
+3.提取state
+4.用其他元素包裹 wrappedComponent
+模式2：inheritance Inversion
+function HOC(wrappedComponent){
+  return class enchance extends wrappedComponent{
+    render(){
+      return super.render()
+    }
+  }
+}
+通过this访问wrappedComponent，可以访问到state,props,组件生命周期方法 和render方法
+inheritance Inversion 的高阶组件 并不会解析一整棵子树
+.渲染劫持
+.操作state
+
+实现react-redux
+connect => props proxy的HOC
+funtion HOCFactoryFactory(..parmas){
+  return function HOCFactory(wrappedComponent){
+    return class HOC extends React.component{
+      render(){
+        return <wrappedComponent {...this.props}/>
+      }
+    }
+  }
+}
+
+
+js 的事件机制：冒泡 捕获 传播 委托
+DOM事件流(event flow)
+事件捕获阶段
+处于目标阶段
+事件冒泡阶段
+
+事件捕获阶段（eventCapturing): 由根节点从开始由外到内进行事件传播
+事件冒泡：由内向外进行事件传播直到根节点
+DOM标准事件流触发的先后顺序：捕获 => 冒泡
+不同的浏览器 对捕获和冒泡是不一样的
+IE 不支持 捕获事件
+
+addEventLister(event,listener,useCapture)
+停止事件传播：event.stopPropagation()
+组织事件默认行为：event.preventDefault()
+
+事件代理（事件委托）
+利用事件冒泡，指定一个事件处理程序，就可以管理某一类型的所有事件
+
+react-router 源码分析
+当URL的hash 发生变化时，触发hashChange注册回调函数，回调函数中进行不同的操作，返回不同的结果
+ function Router (){
+   this.routes = {};
+   this.currentURL='';
+ }
+ Router.prototype.roter = function(path,callback){
+   this.routes[path] callback() || function(){};
+ }
+ Router.prototype.refresh = function(){
+   this.currentURL = location.hash.slice(1);
+   this.routes[this.currentURL]();
+ }
+Router.prototype.init(){
+  window.addEventLister('load',this.refresh.bind(this),false)
+  window.addEventLister('hashChange',this.refresh.bind(this),false)
+}
+
+window.router = new Router();
+window.router.init()
+
+
+
+
+

@@ -1,0 +1,454 @@
+面试题
+1.取整
+parseInt()
+  parseInt() 解析一个字符串并转化为整数 
+             如果输入数字 也是转化为整数
+             + - +0 -0 小数点 科学计数法e 都会识别
+  parseInt(string, radix)  radix 表示要解析的数字的基数
+  1.parseInt('x123'); => NaN
+  2.parseInt('123bbb.b') => 123
+  3.parseInt(123.12) => 数字也是可以的
+  parseInt 对参数不进行隐式转换  
+parseFloat() 
+  解析字符串，并返回一个浮点数（Number类型）
+  不存在进制参数
+  对参数不进行隐式转换  
+2.isNaN() 检查参数是否非数字
+  isNaN 会私自对参数进行隐式转换
+  isNaN('x') => true
+  isNaN(9) => false
+3.Number()
+  1.它会把自己的参数转化成一个数字，然后返回转换后的原始数值（或 NaN）。
+  2.参数会被隐式转换
+  3.如果参数是Date类型，Number()会返回从1970 至今的秒数
+4.String()
+  1.将对象的值转化为字符串 
+  2.参数不存在隐式转换
+  3.String(new Date()) => 返回当前的日期 
+5.decodeURL() URL编码  escape() 字符串进行编码
+
+Array 分析
+1.concat() 
+=>用于连接二个或多个数组
+=>不会改变原来的数据
+=>返回一个新的数组
+[1,2,4].concat([2,4],6); => [1,2,4,2,4,6]
+
+2.join()
+=>将数组中所有的元素放在一个字符串中
+=>元素是通过指定分割符进行分割的
+=>分隔符是可选的，默认是以逗号
+=>不该边原数组，返回组合的字符串
+[1,2,3,4,5].join('') => '12345'
+
+3.pop()
+=> 删除并返回数组的最后一个元素
+=>改变原数组的长度
+=>[].pop() =>undefined;且空数组不会被改变
+[1,2,3].pop() => 3 // 删除元素
+
+4.push()
+=> 向数组末尾添加一个或多个元素，返回新数组的长度
+=> 改变原数组的长度
+=> pop 和 push 提供了先进先出栈的功能
+[1,2,3].push(4) => 4 //长度 
+
+5.shift()
+=> 把数组的第一个元素从其中删除，并返回第一个元素
+=> 改变元数据的长度
+=>shift()和push() 队列先进先出
+[1,2,3].shift() => 1// 删除第一个元素
+
+6.unshift()
+=> 向数组的开头添加一个和多个元素，并返回新的长度
+=>改变原来的长度
+[1,2,3].unshift('4'); => 4 // 长度
+
+7.reverse()
+=> 用于调到数组元素的顺序
+=> 改变原数组
+[2,3,4].reverse(); => [4,3,2] // 修改原来的数组
+
+8.sort(sortBy)
+=> 对数组中的元素进行排序
+=> sortBy 可选，规定排序顺序，必须是函数
+=> 这个方法 如果不传入函数，会按照字母顺序进行排列
+=>对数组的引用，数组在原数组中进行排序，不生产副本
+  var a = [1,2,3,6,7,8,12,45,23,12,0];
+  a.sort(function(a,b){return a-b}); 
+  => [0, 1, 2, 3, 6, 7, 8, 12, 12, 23, 45] // 升序排列
+
+9.slice()
+=> 从已有的数组中返回选定的元素
+=>arrayObject(start,end)
+=>start 必须，规定从何处开始选择（下标），如果是负数，则从数组尾部开始算起
+=> end 可选，规定从何处开始结束的下标，默认无，到结尾
+=> 不改变原来的数据，返回一个新的数组
+var a = [12,3,45,,3,45,4];
+var b = a.slice(-4);
+a; =>  [12,3,45,empty,3,45,4];
+b; =>  [empty, 3, 45, 4];
+
+9.splice()
+=> 向数组中添加、删除项目，然后返回被删除的项目
+=> 改变原始数组
+=> arr.splice(index,howMany,item...)
+   index:必须，整数，规定添加/删除项目的位置，使用负数从数组结尾处开始
+   howMany: 必须，要删除项的数目，如果设置为0，则不会删除项目
+   item...: 可选，向数组中添加新的项目
+=> 返回值是被删掉的元素
+var a = [1,2,3,4,5,6,7,8,0];
+a.splice(-4,2,6,7,9);=> [6, 7]
+a; => [1, 2, 3, 4, 5, 6, 7, 9, 8, 0]
+
+10.toString() => 将数组变成字符串，并返回，类似于 +''
+11.valueOf() => 返回对象的原始值
+es6 中新加的Array 的方法
+12.copyWithin()
+=> 浅复制数组的一部分到同一个数组中的另一个位置。并返回它，不修改器大小
+=> arr.copyWithin(target[,start[,end]])
+   fill() => 用在一个固定值填充一个数组中从起始索引到中终止索引内的全部元素
+
+
+13.entries() 
+=> 返回一个新的Array Iterator对象，改对象包含数组中每个索引的键/值对；
+=> 一个新的Array 迭代器
+=> 不会改变原数组
+思考二维数组排序？
+普通方法1：
+function twoSort(arr){
+  if(arr.length===0) return
+  for(var i = 0;i<arr.length;i++){
+    if(Array.isArray(arr[i])){
+       arr[i].sort(function(a,b){return a-b})
+    }
+  }
+  return arr;
+}
+twoSort([[1,2,4,5],[7,8,90,5],[234,2,3,4]]);
+方法2：
+arr.keys() => 一个新的Array 迭代器对象 取keys 值的
+arr.values() => 一个新的Array 迭代器对象 取value 值的
+var arr = [1,2,3,4,5];
+var k = arr.keys();
+var v = arr.values();
+
+for(const key in k){
+  console.log(key);
+}
+
+for(const value in v){
+  console.log(value);
+}
+
+
+13.every()
+=> arr.every(callback,thisArg);
+=>callback 测试每个元素的函数 callback(元素值，元素索引，原数组)
+  thisArg 执行callback时用的this
+=>数组中每一个元素执行这个callback 函数，直到返回一个false
+  如果每一个都返回true，则返回true
+=> every 不会改变原数组
+   var a = [3,23,34,45,43,2,1];
+   a.every(function(ele,index,arr){ return ele>50}); =>false
+
+14.filter()
+=> 创建一个新数组，其包含所有通过提供函数筛选的所有元素
+=> arr.filter(callback,thisArg);
+=> callback(ele,index,arr)
+=> 返回新的数组，不会修改原来的数组
+   var a = [3,23,34,45,43,2,1];
+   a.filter(function(ele,index,arr){return ele > 10}); => [23, 34, 45, 43]
+
+15.forEach()
+=> 数组的每一个元素执行了一次提供的函数
+=> arr.forEach(callback,thisArg)
+=> callback(ele,index,arr)
+=> forEach 按照升序的方法为数组中含有有效值的每一项执行callback,
+   那些已经删除或者未初始化，将会被删除
+=> 修改原数组的值
+  var a  =[1,3,4,2,22,222];
+  a.forEach(function(ele,index,arr){if(ele ===2){arr.shift()}});
+  a; =>  [3, 4, 2, 22, 222]
+
+16.map()
+=> 创建一个新数组，其结果是该数组中的每一个元素都调用一个提供的函数后返回结果
+=>不修改原数组
+  var a =[1,2,3,4];
+  var b = a.map(function(ele,index,arr){ return ele*2;})  
+  翻转字符串？
+  function reverse(str){
+    var _str = str+'';
+    var arrStr = _str.split('');
+    return arrStr.reverse().join('')
+  }  
+
+17.some()
+=>检测数组中的某些元素是否通过提供的函数实现的测试
+=> arr.some(callback,thisArg)
+=> callback(ele,index,arr)
+=> 只要找到就返回true
+
+18.查找数组中的某一个元素的方法
+   find()
+   => 返回数组中满足提供测试函数的第一个元素值，否则返回undefined
+   => arr.find(callback,thisArg)
+   =>callback(ele,index,arr)
+   => 不会改变数组
+   var obj = [{a:1},{a:2},{a:3}];
+   obj.find(function(ele,index,arr)
+                    {return ele.a === 1});  => {a:1} 
+
+   findIndex()
+   => 返回数组中满足提供的测试函数的第一元素索引，否则返回 -1
+   => arr.findIndex(callback,thisArg)
+   => callback(ele,index,arr)
+
+   includes()
+   => 用来判断一个数组是否含有一个指定的值，含有返回true，不含有返回false
+   => arr.includes(searchEle,formIndex)
+
+   indexOf() 
+   =>返回在数组中一个指定元素的第一个索引，如果不存在，返回-1
+   => arr.indexOf(searchEle,formIndex)
+19.reduce()
+=> 对累加器和中的数组中的每一个元素（从左到右）应用一个函数，
+    将减少为单个值  
+=>arr.reduce(callback,thisArg)
+=>callback(accumulator,currentvalue,currentIndex,arr)
+应用:
+1.将二维数组转化为一维数组
+  [[1,2],[2],1].reduce(function(acc,curr,currIndex,arr){
+  return acc.concat(curr);
+});
+2.计算元素出现的次数(forEach)
+3.数组去重 new Set()
+  let result = [1,2,2,2,2,2,2,4,4,4,4,4].sort().reduce((init,crr) => {
+  if(init.length ===0 || init[init.length-1]!==crr){
+    init.push(crr)
+  }
+  return init;
+  },[]);
+  result;  => 1,2,4  
+
+Boolean 
+Boolean() => Boolean(0)=> false Boolean('') => false 其他为true 
+
+Math
+Math.floor(1.234); //向下取整
+Math.ceil(1.234); // 向上取整
+Math.round(2.3); // 返回四舍五入后的整数
+Math.random(); // 0.0 ~ 1.0 之间的一个伪随机数
+
+Math的参数 会做一个默认的转字符串 调用字符转number() 
+但是并不会和parseInt 一样，做最优处理
+toFixed() 方法可把 Number 四舍五入为指定小数位数的数字。
+toFixed() => 123.23.toFixed(2) 前面必须是数字   将数字转换为字符串
+
+String
+1.charAt()
+=>从一个字符串中返回指定位置的字符
+=> str.charAt(index)
+=>index : 0 ~length-1
+用法：千分位
+//charAt 根据Index 获取字符
+function toThousands(num) {
+var result = '',
+  counter = 0;
+  num = (num || 0).toString();
+  for (var i = num.length - 1; i >= 0; i--) {
+    counter++;
+    result = num.charAt(i) + result;
+    if (!(counter % 3) && i != 0) {
+      result = ',' + result;
+   }
+ }
+  return result;
+  }
+2.includes()
+=> 用于判断一个字符串是否包含另外一个字符串
+=> str.includes(searchEle,fromIndex)
+=> 找到 返回true 找不到返回false
+=> 区分大小写的
+
+3.indexOf()
+=> 第一次出现指定值的位置的索引，没有就返回-1
+=> arr.indexOf(searchEle,fromIndex)
+
+3.padEnd/padStart
+=> 结尾 和开始填充字符串
+=>str.padEnd(taegetLength,padString)
+=> targetLength 字符串长度
+   padString 用什么填充，不写就是空格
+ 4.replace()
+ => 用新的字符串填充匹配的字符串，返回一个新的字符串，不改变原来的字符串
+ 5.search()
+ => 执行正则表达式和String对象之间的一个正则匹配
+6.split()
+=> 指定的分割符字符串将string 对象 分割成字符串数组。
+=> str.split(拆分符)
+7.startWith、endWith
+=> 判断字符串“开头”和结尾
+=>true /false
+8.trim()
+=> 删除字符串二端的空白
+=> 并不影响字符串本身，返回一个新的字符串
+9.substr
+=>返回一个字符串中从指定位置开始到指定字符数的字符。
+=>str.substr(start[, length])
+  start开始提取字符的位置。如果为负值，则被看作 strLength + start，
+  其中 strLength 为字符串的长度
+  （例如，如果 start 为 -3，则被看作 strLength + (-3)）。
+=>  length   提取的字符数
+=> 不会修改原来的字符串
+
+Object
+Object.prototype object 的原型duix
+Object.prototype.hasOwnProtype()
+=> 表示对象中是否含有此属性，并非原型链的属性
+Object.prototype.isPrototypeOf()
+=> 对象的属性是否在本对象的原型链中
+Object() 构造函数
+Object.assign() 
+=>将所有可枚举的属性，从一个或者多个源对象复制到目标对象中，并返回目标对象
+Object.create()
+=> 创建一个新对象，使用现有的对象来提供新创建的对象的__proto__
+function createObj (o){
+  function F(){}
+  F.prototype = o;
+  return new F();
+}
+Object.definedProperty(obj,prop,descriptor)
+descriptor:{
+  1.configurable
+  2.enumerable
+  3.value
+  4.writable
+  5.get
+  6.set
+}
+instanceOf 判断一个对象属性是否在其原型链中，
+Object.getPrototypeOf() 指定对象的原型对象
+Object.keys() 一个由给性对象的自身可枚属性值组成的数组，不包括原型链上的属性
+Object.setPrototypeOf() 设置对象的原型
+Object.values 返回一个给定对象自身的所以可枚举属性值的数组
+对象创建的方法：
+1.{}
+2.new Object();
+3.Object.create();
+深拷贝
+1.序列化字符串JSON.stringfy() JSON.parse()
+2.递归拷贝
+ // 深拷贝
+  function deepCopy(obj) {
+    if (typeof obj !== 'object') return obj;
+    var newObj = obj instanceof Array ? [] : {};
+    for (var key in obj) {
+      if (obj.hawOwnPrototype(key)) {
+        newObj[key] = typeof obj[key] === 'object' ? deepCopy(obj[key]) : obj[key];
+      }
+    }
+    return newObj;
+  }
+=> Object.prototype.toString.call() 用来判断类型的
+
+原型的Function 和Object
+Object instanceOf Function => true
+Function instanceOf Object = true 
+
+Function -prototype-> Function.prototype -construction-> Function
+Function.prototype.__proto__ = Object.prototype -__proto__-> null
+1.Function.prototype 继承 Object.prototype
+2.Function和Object 和其他构造函数是继承 Function.prototype
+3.Function.prototype Function.__proto__ 都是指向 Function.prototype
+
+js定义的参数 都是按照值进行传递的
+1.ECMA 中的所有函数都是按照值进行传递的
+2.函数外部的值赋值给函数内部的值 ，从而将一个值从一个变量赋值给另外一个变量
+3.共享传递：按照引用对象的引用，而按照共享传递是传递一个变量的副本
+4.总结：参数如果是基本数据类型，则是按照值传递，引用类型，按照共享传递
+
+new 的实现
+new A('test')
+1.var o =new Object();
+2.o.__proto__ = A.prototype;
+3.A.call(0); // 构造函数的属性值绑定
+4.return A
+若A返回的是Object类型，直接返回A
+如果不是返回 {}
+function newFactor(){
+  var obj = new Object();
+  var construction = Array.prototype.slice.call(arguments);
+  obj.__proto__ = construction.prototype;
+  var ret = construction.call(obj,arguments);
+  return typeof ret ===='object'? ret :obj;
+}
+
+js 的继承
+1、类式继承中：使用构造函数初始化对象的属性，通过调用父类的构造函数来继承这些属性。通过new 父类的prototype来继承方法。
+2、原型式继承中：去掉了构造函数，但需要将对象的属性和方法写一个{}里申明。准确的说，原型式继承就是类式继承中继承父类的prototype方法。
+1.原型链继承
+function parent() {
+    this.name = 'kievn';
+  }
+  parent.prototype.getName = function() {
+    console.log(this.name);
+  }
+
+  function child(name.age) {
+     parent.call(this,name) // 针对参数的形式
+  }
+  child.prototype = new parent();
+  var child1 = new child();
+  console.log(child1.getName())
+2.原型式继承
+ function clone(object) {
+    function F() {}
+    F.prototype = object;
+    return new F();
+  }
+
+  function extend(child, parent) {
+    var F = function() {};
+    F.prototype = parent.prototype;
+    child.prototype = new F();
+    child.prototype.construction = child;
+  }
+
+闭包：
+=> 指的是那些可以访问自由变量的函数
+=>自由变量：函数中使用，单既不是函数的参数也不是函数的局部变量的变量
+=>闭包：函数+函数可以访问自由变量
+从实践角度来说：
+1.即使创建它的函数上下文全部销毁了，它依然存在；
+2.在代码中引用了自由变量 => 因为作用域链的原因
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+
+
+
+

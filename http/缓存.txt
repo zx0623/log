@@ -50,8 +50,16 @@ sessionStorage仅在当前会话下有效，关闭页面或浏览器后被清除
 cookie:登录用户身份的数据来实现
 大小：4kb
 cookie在与服务器端通信每次都会携带在HTTP头中，如果使用cookie保存过多数据会带来性能问题,
-
 cookie 由服务器生成，用于标识用户身份
+cookie:不能跨域
+cookie 如果后端不设置Expire 和 max-age ，Cookie就是会话期间的，Cookie结束，Cookie就回被清除。如果设置了Expire 和 max-age  Cookie 就是持久的
+服务器端通过set-cookie 响应头向用户代理发送Cookie信息。提示客户端要存储 cookie
+标记secure 和 httpOnly 的标记，Cookie 不能被js 访问，设置httpOnly 其实是通过 http resoponse header 到浏览器中
+
+在 head 中使用 阻塞 的js ,这回严重 拖慢页面的渲染速度
+现在浏览器会使用 async  和 defer 来提供货异步加载的
+
+
 
 cache manifest基础
 
@@ -77,10 +85,55 @@ cache manifest基础
                             |
                             |
                             |
-                             --否-> 从缓存中读取 -->呈现         
+                             --否-> 从缓存中读取 -->呈现
+If-Modified-Since：记录页面最后修改时间的 HTTP 头信息 （客户端往服务器发送的头 ）
+Last-Modified： 记录页面最后修改时间的 HTTP 头信息（ 由服务器往客户端发送的 HTTP 头  ）                               
 Etag是一个可以与web 资源关联的记号（token）
+ETags和If-None-Match的工作原理是在HTTP Response中添加ETags信息。
 Last-Modified:次文档在服务器最后修改的时间
 If-Modified-Since:浏览器会向服务器传送If-Modified-Since报头，询问改时间之后文件是否被修改过；
 
 缓存的分类：
 数据库缓存 代理服务器缓存
+
+共享关系：
+同源策略 => 要求后端请求的资源源于同一个域名下面
+跨域共享资源：
+CORS：cross-origin-resource
+sharing:
+Access-control-Allow-credentials
+Access-control-Allow-methods
+Access-control-Allow-origin
+http 请求
+1.open(methods,url,async(option),user(option),password(option))
+2.send
+3.onreadyStateChange
+4.onreadyState(0 未发送，1 已发送,2 接受请求,3 ,4 完成)
+5.State(http 状态吗)
+6.responseText
+var myXMLHttpRequest = new XMLHttpRequest();
+var url = ''
+myXMLHttpRequest.onreadyStateChange = function(){
+  if(onreadyState === 4 & myXMLHttpRequest.state ===2){
+
+  }
+}
+JSONP
+1.利用动态生成script标签来解决
+2.var script = docuememt.creatElelment('script');
+script.type = 'text/js'
+script.src = 'url'
+docuememt.getElementByTagName('head'[0]).appendChild('script');
+服务器 也要对JSONP 有一定的支持，通常在URL加入queryString的callback 告诉后端函数的名字 jsonp?callback(getXXX())
+
+与缓存相关的HTTP首部字段主要有哪些？
+
+这些HTTP首部字段之间的联系与区别？
+
+HTTP缓存首部字段的优先级？
+
+HTTP缓存首部字段的特点与局限性？
+
+用户不同的页面刷新行为的差别？
+
+在实践中我们该用哪些报文头来控制缓存呢？

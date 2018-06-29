@@ -42,8 +42,10 @@
   }
 
   .two1 {
+    float: left;
     background: pink;
     width: 100%;
+    margin-right: -200px;
   }
 
   .wrap2 {
@@ -51,30 +53,52 @@
     overflow: hidden;
   }
 
-  .one2,
-  .two2 {
+  .one12,
+  .two12 {
     height: 100px;
   }
 
-  .one2 {
+  .one12 {
     float: left;
     background: yellow;
     width: 200px;
+  }
+
+  .two12 {
+    background: pink;
     overflow: hidden;
   }
 
-  .two2 {
-    background: pink;
-    width: 100%;
+  .container {
+    width: 500px;
+    height: 200px;
+    border: 1px solid black;
+    margin: 10px auto;
+  }
+
+  .left {
+    float: left;
+    width: 100px;
+    height: 100px;
+    border: 1px solid red;
+  }
+
+  .right {
+    overflow: hidden;
+    border: 1px solid blue;
+    height: 100px;
+    margin-left: 110px;
+    width: 100px;
   }
 </style>
 
 <body>
   <!-- 二栏布局的实现方式
       1. flex flex: 0 0 200px; flex:1 可以给第一个元素设置宽度(overflow:hiddle)，但是如果flex:1 的内容过多，就回挤压第一元素的宽度。
-      2. float+margin
-      3. float+ overflow:hiddle
+      2. float+ margin
+      3. float+overflow:hiddle
       4. grid
+      5.计算属性 width:100px width: calc(100%-100px);
       如果给一个浮动元素加上相反方向的负margin，则会使行间距为0且内容重叠。
       这对于创建1列是100%宽度而其他列是固定宽度（比如100px）的自适应布局来说是非常有用的方法
       -->
@@ -87,8 +111,16 @@
     <div class="two1">two</div>
   </div>
   <div class="wrap2">
-    <div class="one2">one</div>
-    <div class="two2">two</div>
+    <div class="one12">one</div>
+    <div class="two12">two</div>
+  </div>
+  <div class="container">
+    <div class="left">
+      left
+    </div>
+    <div class="right">
+      right
+    </div>
   </div>
 </body>
 
