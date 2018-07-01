@@ -65,6 +65,8 @@ react基于Virtual DOM 实现了一个SynthticEvent(合成事件)层，我们所
    在componentDidMount()中调用原生
    在组件卸载时候，手动移除，
 受控组件：
+
+
    
  
          
