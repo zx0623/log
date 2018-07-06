@@ -36,7 +36,7 @@ TCP连接
    1.flex
    2.float+margin
    3.float+overflow:hiddle
-   4.cale() 计算属性
+   4.calc() 计算属性
 14.手写一个 Linux 路径访问器
 // /a/b/../c/./d => /a/c/d
   function toTargetUrl(url) {

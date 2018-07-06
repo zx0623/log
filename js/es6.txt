@@ -1,5 +1,6 @@
 箭头函数
-=> 没有this,super,arguments，和new.target绑定 箭头函数的 this,super,arguments，和new.target绑是有他外层非箭头函数决定的
+=> 没有this,super,arguments，和new.target绑定 
+   箭头函数的 this,super,arguments，和new.target绑是有他外层非箭头函数决定的
 =>不能通过new 关键字调用
 =>没有原型
 =>不可以改变this 的绑定
@@ -27,6 +28,7 @@ map集合常用来被用于获取已存的信息
 =>set.has() 判断是否有这个值
 => 调用delete() 方法可以移除Set集合中的某一个元素
 => forEach()
+
 Map 类型是一种存储着许多键值对的有序列表，其中的键名和对应的有序列表，其中的键名和对应的值支持所有的数据类型。
 => set() 方法 并分别传入键名和对应值作为二个参数；
 => get() 方法 从集合中获取信息
