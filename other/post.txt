@@ -1,0 +1,19 @@
+四种常见POST提交数据方式：
+
+application/x-www-form-urlencoded
+常见的post提交数据的方式，浏览器的原生<form>表单，如果不设置enctype 属性，
+那么最终就会 application/x-www-form-urlencoded 方式提交数据。
+首先，Content-Type 被指定为 application/x-www-form-urlencoded；
+其次，提交的数据按照 key1=val1&key2=val2 的方式进行编码，key 和 val 都进行了 URL 转码。
+大部分服务端语言都对这种方式有很好的支持
+
+
+multipart/form-data
+这是一个常见的POST数据提交方式，我们使用表单上传文件时，必须让<form> 表单的 enctype = multipart/form-data
+
+application/json
+application/json 这个 Content-Type 作为响应头大家肯定不陌生。
+实际上，现在越来越多的人把它作为请求头，用来告诉服务端消息主体是序列化后的 JSON 字符串。
+
+text/xml
+它是一种使用 HTTP 作为传输协议，XML 作为编码方式的远程调用规范。

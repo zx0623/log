@@ -38,7 +38,7 @@ Array 分析
 =>将数组中所有的元素放在一个字符串中
 =>元素是通过指定分割符进行分割的
 =>分隔符是可选的，默认是以逗号
-=>不该边原数组，返回组合的字符串
+=>不改变原数组，返回组合的字符串
 [1,2,3,4,5].join('') => '12345'
 
 3.pop()
@@ -143,12 +143,12 @@ for(const value in v){
 
 
 13.every()
-=> arr.every(callback,thisArg);
 =>callback 测试每个元素的函数 callback(元素值，元素索引，原数组)
   thisArg 执行callback时用的this
 =>数组中每一个元素执行这个callback 函数，直到返回一个false
   如果每一个都返回true，则返回true
 => every 不会改变原数组
+=> arr.every(callback,thisArg);
    var a = [3,23,34,45,43,2,1];
    a.every(function(ele,index,arr){ return ele>50}); =>false
 
@@ -318,6 +318,8 @@ function createObj (o){
   F.prototype = o;
   return new F();
 }
+var  a = Object.create({a:1});
+a;a.__proto__ ==={a:1} true;
 Object.definedProperty(obj,prop,descriptor)
 descriptor:{
   1.configurable
